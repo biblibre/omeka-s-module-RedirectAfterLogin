@@ -27,9 +27,12 @@ class MvcListeners extends AbstractListenerAggregate
         }
 
         $routeMatch = $event->getRouteMatch();
-        if ('login' !== $routeMatch->getMatchedRouteName()) {
-            $session = Container::getDefaultManager()->getStorage();
-            $session->offsetSet('redirect_url', $event->getRequest()->getUriString());
+        if ('login' === $routeMatch->getMatchedRouteName()) {
+            $redirect_url = $event->getRequest()->getQuery('redirect_url');
+            if ($redirect_url && 0 === strpos($redirect_url, '/')) {
+                $session = Container::getDefaultManager()->getStorage();
+                $session->offsetSet('redirect_url', $redirect_url);
+            }
         }
     }
 }
